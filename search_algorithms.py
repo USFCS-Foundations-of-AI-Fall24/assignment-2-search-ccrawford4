@@ -1,11 +1,10 @@
 from collections import deque
 
-
-
 ## We will append tuples (state, "action") in the search queue
 def breadth_first_search(startState, action_list, goal_test, use_closed_list=True) :
     search_queue = deque()
     closed_list = {}
+    states = 1
 
     search_queue.append((startState,""))
     if use_closed_list :
@@ -13,6 +12,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
     while len(search_queue) > 0 :
         ## this is a (state, "action") tuple
         next_state = search_queue.popleft()
+        print("States: ", states)
         if goal_test(next_state[0]):
             print("Goal found")
             print(next_state)
@@ -23,6 +23,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
             return next_state
         else :
             successors = next_state[0].successors(action_list)
+            states += len(successors)
             if use_closed_list :
                 successors = [item for item in successors
                                     if item[0] not in closed_list]
@@ -62,6 +63,3 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
 
 ## add iterative deepening search here
 
-
-
-f
