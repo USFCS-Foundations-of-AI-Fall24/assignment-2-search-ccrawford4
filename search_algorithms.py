@@ -14,9 +14,9 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
         next_state = search_queue.popleft()
 
         if goal_test(next_state[0]):
-            print("Goal found")
-            print("Total States: ", states)
-            print(next_state)
+            #print("Goal found")
+            print("Total States Using BFS: ", states)
+            # print(next_state)
             ptr = next_state[0]
             while ptr is not None :
                 ptr = ptr.prev
@@ -40,6 +40,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
 def depth_first_search(startState, action_list, goal_test, use_closed_list=True,limit=0) :
     search_queue = deque()
     closed_list = {}
+    states = 1
 
     search_queue.append((startState,""))
     if use_closed_list :
@@ -48,21 +49,26 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
         ## this is a (state, "action") tuple
         next_state = search_queue.pop()
         if goal_test(next_state[0]):
-            print("Goal found")
-            print(next_state)
+            # print("Goal found")
+            # print(next_state)
+            print("Total States in DFS: ", states)
             ptr = next_state[0]
             while ptr is not None :
                 ptr = ptr.prev
-                print(ptr)
+                # print(ptr)
             return next_state
         else :
             successors = next_state[0].successors(action_list)
+            states += len(successors)
             if use_closed_list :
                 successors = [item for item in successors
                                     if item[0] not in closed_list]
                 for s in successors :
                     closed_list[s[0]] = True
             search_queue.extend(successors)
+
+
+
 
 ## add iterative deepening search here
 

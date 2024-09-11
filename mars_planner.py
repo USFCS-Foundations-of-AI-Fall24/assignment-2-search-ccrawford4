@@ -1,4 +1,6 @@
 ## actions:
+## pick up tool
+## move_to_sample
 ## use_tool
 ## move_to_station
 ## drop_tool
@@ -12,7 +14,8 @@
 ## Charged can be True or False
 
 from copy import deepcopy
-from search_algorithms import breadth_first_search
+from search_algorithms import breadth_first_search, depth_first_search
+
 
 class RoverState :
     def __init__(self, loc="station", sample_extracted=False, holding_sample=False, charged=False):
@@ -22,9 +25,13 @@ class RoverState :
         self.charged=charged
         self.prev = None
 
-    ## you do this.
     def __eq__(self, other):
-       pass
+       return (
+            self.loc == other.loc and
+            self.sample_extracted == other.sample_extracted and
+            self.holding_sample == other.holding_sample and
+            self.charged == other.charged
+       )
 
 
     def __repr__(self):
@@ -65,37 +72,25 @@ def move_to_battery(state) :
     r2.loc = "battery"
     r2.prev = state
     return r2
+# add tool functions here
 
-# Tool functions
-def pick_up_tool(state) :
+def extract_sample(state) :
     r2 = deepcopy(state)
-    r2.holding_tool = True
-    r2.loc = "station"
-    r2.prev = state
-    return r2
-
-def drop_tool(state) :
-    r2 = deepcopy(state)
-    r2.holding_tool = False
-    r2.prev = state
-    return r2
-
-def use_tool(state) :
-    r2 = deepcopy(state)
-    r2.sample_extracted = True
+    if sample_goal(state) :
+        r2.sample_extracted = True
     r2.prev = state
     return r2
 
 def pick_up_sample(state) :
     r2 = deepcopy(state)
-    if state.sample_extracted and state.loc == "sample":
+    if sample_extract_goal(state) and sample_goal(state) :
         r2.holding_sample = True
     r2.prev = state
     return r2
 
 def drop_sample(state) :
     r2 = deepcopy(state)
-    if state.sample_extracted and state.loc == "station":
+    if sample_extract_goal(state) and station_goal(state) :
         r2.holding_sample = False
     r2.prev = state
     return r2
@@ -107,10 +102,13 @@ def charge(state) :
     r2.prev = state
     return r2
 
-action_list = [charge, drop_sample, pick_up_sample, move_to_sample, move_to_battery,
-               move_to_station, pick_up_tool, drop_tool, use_tool]
 
-# Location goals
+# action_list = [charge, drop_sample, pick_up_sample,
+#                move_to_sample, move_to_battery, move_to_station]
+
+action_list = [move_to_sample, extract_sample, pick_up_sample, move_to_station, drop_sample,
+               move_to_battery, charge]
+
 def battery_goal(state) :
     return state.loc == "battery"
 
@@ -121,16 +119,20 @@ def station_goal(state) :
     return state.loc == "station"
 
 # Other goal functions
-def sample_extracted_goal(state) :
+def sample_extract_goal(state) :
     return state.sample_extracted
 
 def charged_goal(state) :
     return state.charged
 
 def mission_complete(state) :
-    return battery_goal(state) and charged_goal(state) and sample_extracted_goal(state)
+    return battery_goal(state) and charged_goal(state) and sample_extract_goal(state)
 
 if __name__=="__main__" :
     s = RoverState()
-    result = breadth_first_search(s, action_list, mission_complete)
-    print(result)
+    breadth_first_search(s, action_list, mission_complete)
+
+    s = RoverState()
+    depth_first_search(s, action_list, mission_complete)
+
+
