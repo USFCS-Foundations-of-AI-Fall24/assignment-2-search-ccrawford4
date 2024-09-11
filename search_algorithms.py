@@ -45,7 +45,10 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
     search_queue.append((startState,""))
     if use_closed_list :
         closed_list[startState] = True
+
+    depth = 0
     while len(search_queue) > 0 :
+        depth += 1
         ## this is a (state, "action") tuple
         next_state = search_queue.pop()
         if goal_test(next_state[0]):
@@ -58,6 +61,9 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
                 # print(ptr)
             return next_state
         else :
+            if depth == limit :
+                print("Recursion limit reached!")
+                return
             successors = next_state[0].successors(action_list)
             states += len(successors)
             if use_closed_list :

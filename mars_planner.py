@@ -102,10 +102,6 @@ def charge(state) :
     r2.prev = state
     return r2
 
-
-# action_list = [charge, drop_sample, pick_up_sample,
-#                move_to_sample, move_to_battery, move_to_station]
-
 action_list = [move_to_sample, extract_sample, pick_up_sample, move_to_station, drop_sample,
                move_to_battery, charge]
 
@@ -133,6 +129,8 @@ if __name__=="__main__" :
     breadth_first_search(s, action_list, mission_complete)
 
     s = RoverState()
-    depth_first_search(s, action_list, mission_complete)
+    depth_first_search(s, action_list, mission_complete, limit=6)
+
+
 
 
