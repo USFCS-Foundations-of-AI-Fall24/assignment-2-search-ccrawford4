@@ -1,6 +1,4 @@
 ## actions:
-## pick up tool
-## move_to_sample
 ## use_tool
 ## move_to_station
 ## drop_tool
@@ -24,13 +22,9 @@ class RoverState :
         self.charged=charged
         self.prev = None
 
+    ## you do this.
     def __eq__(self, other):
-       return (
-            self.loc == other.loc and
-            self.sample_extracted == other.sample_extracted and
-            self.holding_sample == other.holding_sample and
-            self.charged == other.charged
-        )
+       pass
 
 
     def __repr__(self):
@@ -71,8 +65,26 @@ def move_to_battery(state) :
     r2.loc = "battery"
     r2.prev = state
     return r2
-# add tool functions here
 
+# Tool functions
+def pick_up_tool(state) :
+    r2 = deepcopy(state)
+    r2.holding_tool = True
+    r2.loc = "station"
+    r2.prev = state
+    return r2
+
+def drop_tool(state) :
+    r2 = deepcopy(state)
+    r2.holding_tool = False
+    r2.prev = state
+    return r2
+
+def use_tool(state) :
+    r2 = deepcopy(state)
+    r2.sample_extracted = True
+    r2.prev = state
+    return r2
 
 def pick_up_sample(state) :
     r2 = deepcopy(state)
@@ -95,9 +107,8 @@ def charge(state) :
     r2.prev = state
     return r2
 
-
-action_list = [charge, drop_sample, pick_up_sample,
-               move_to_sample, move_to_battery, move_to_station]
+action_list = [charge, drop_sample, pick_up_sample, move_to_sample, move_to_battery,
+               move_to_station, pick_up_tool, drop_tool, use_tool]
 
 # Location goals
 def battery_goal(state) :
@@ -116,17 +127,10 @@ def sample_extracted_goal(state) :
 def charged_goal(state) :
     return state.charged
 
-def holding_sample_goal(state) :
-    return state.holding_sample
-
-# Return true if we are at the battery, charged, and the sample is at the station
 def mission_complete(state) :
     return battery_goal(state) and charged_goal(state) and sample_extracted_goal(state)
 
 if __name__=="__main__" :
     s = RoverState()
-    result = breadth_first_search(startState=s, action_list=action_list, goal_test=mission_complete)
-    print("Result: ", result)
-
-
-
+    result = breadth_first_search(s, action_list, mission_complete)
+    print(result)

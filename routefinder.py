@@ -36,6 +36,7 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
     search_queue = PriorityQueue()
     closed_list = {}
     search_queue.put(start_state)
+    # Look at the depth
     ## you do the rest.
 
 
@@ -45,6 +46,7 @@ def h1(state) :
 
 ## you do this - return the straight-line distance between the state and (1,1)
 def sld(state) :
+    # (x2-x1)2 + (y2-y1)
     sqt(a^ + b2)
 
 ## you implement this. Open the file filename, read in each line,
