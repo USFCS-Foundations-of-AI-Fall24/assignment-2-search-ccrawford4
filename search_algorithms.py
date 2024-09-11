@@ -15,14 +15,14 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
 
         if goal_test(next_state[0]):
             #print("Goal found")
-            print("Total States Using BFS: ", states)
             # print(next_state)
             ptr = next_state[0]
             while ptr is not None :
                 ptr = ptr.prev
                 # dont like this print statement
                 # print(ptr)
-            return next_state
+            #return next_state
+            return states
         else :
             successors = next_state[0].successors(action_list)
             states += len(successors)
@@ -32,7 +32,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
                 for s in successors :
                     closed_list[s[0]] = True
             search_queue.extend(successors)
-
+    return states
 
 ### Note the similarity to BFS - the only difference is the search queue
 
@@ -73,10 +73,15 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
                     closed_list[s[0]] = True
             search_queue.extend(successors)
 
-
-
-
 ## add iterative deepening search here
+def iterative_deepening_search(start_state, action_list, goal_test, use_closed_list=True, max_limit=50) :
+    for limit in range(1, max_limit) :
+        # If we have a valid DFS() algorithm then return
+        if depth_first_search(start_state, action_list, goal_test, use_closed_list, limit) :
+            print("Found earliest possible recursion depth: ", limit)
+            return
+    print("No valid recursion depth between 1 and ", max_limit)
+
 
 # depth limited search at depth 1, then depth 2, then depth 3, etc.
 # Pros: has linear memory

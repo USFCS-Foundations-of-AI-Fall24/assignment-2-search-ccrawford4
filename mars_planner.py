@@ -14,7 +14,7 @@
 ## Charged can be True or False
 
 from copy import deepcopy
-from search_algorithms import breadth_first_search, depth_first_search
+from search_algorithms import breadth_first_search, depth_first_search, iterative_deepening_search
 
 
 class RoverState :
@@ -147,8 +147,34 @@ def mission_complete(state) :
     return battery_goal(state) and charged_goal(state) and sample_extract_goal(state)
 
 if __name__=="__main__" :
+    print("---------Before problem decomposition-----------")
     s = RoverState()
-    breadth_first_search(s, action_list, mission_complete)
+    print("Total States Using BFS: ", breadth_first_search(s, action_list, mission_complete))
 
     s = RoverState()
     depth_first_search(s, action_list, mission_complete, limit=9)
+
+    s = RoverState()
+    iterative_deepening_search(s, action_list, mission_complete)
+
+    print("---------After problem decomposition------------")
+
+    # Modify your search code so that it instead solves three subproblems: moveToSample, removeSample, and returnToCharger.
+    s = RoverState()
+
+    bfs_total_states = 0
+    # First move to the sample
+    action_list = [move_to_sample]
+    bfs_total_states += breadth_first_search(s, action_list, sample_goal)
+
+
+    # Second extract the sample
+    # should be at the sample
+    action_list = [pick_up_tool, use_tool, drop_tool, pick_up_sample]
+    bfs_total_states += breadth_first_search(s, action_list, sample_extract_goal)
+
+    # Return to charger
+    action_list = [move_to_station, drop_sample, move_to_battery, charge]
+    bfs_total_states += breadth_first_search(s, action_list, mission_complete)
+
+    print("Total BFS States: ", bfs_total_states)

@@ -35,6 +35,8 @@ model.Add(ContraCosta != Marin)
 
 status = solver.Solve(model)
 
+# have 9 attenna *use this for it colors = nodes
+
 if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
     print("SF: %s" % colors[solver.Value(SF)])
     print("Alameda: %s" % colors[solver.Value(Alameda)])
