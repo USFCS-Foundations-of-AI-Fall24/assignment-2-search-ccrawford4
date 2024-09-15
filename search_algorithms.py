@@ -1,7 +1,7 @@
 from collections import deque
 
 ## We will append tuples (state, "action") in the search queue
-def breadth_first_search(startState, action_list, goal_test, use_closed_list=True) :
+def breadth_first_search(startState, action_list, goal_test, use_closed_list=True) -> (any, int):
     search_queue = deque()
     closed_list = {}
     states = 0
@@ -10,19 +10,13 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
     if use_closed_list :
         closed_list[startState] = True
     while len(search_queue) > 0 :
-        ## this is a (state, "action") tuple
         next_state = search_queue.popleft()
 
         if goal_test(next_state[0]):
-            #print("Goal found")
-            # print(next_state)
             ptr = next_state[0]
             while ptr is not None :
                 ptr = ptr.prev
-                # dont like this print statement
-                # print(ptr)
-            #return next_state
-            return states
+            return next_state, states
         else :
             successors = next_state[0].successors(action_list)
             states += len(successors)
@@ -32,12 +26,12 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
                 for s in successors :
                     closed_list[s[0]] = True
             search_queue.extend(successors)
-    return states
+    return None, states
 
 ### Note the similarity to BFS - the only difference is the search queue
 
 ## use the limit parameter to implement depth-limited search
-def depth_first_search(startState, action_list, goal_test, use_closed_list=True,limit=0) :
+def depth_first_search(startState, action_list, goal_test, use_closed_list=True,limit=0) -> (any, int, bool) :
     search_queue = deque()
     closed_list = {}
     states = 1
@@ -49,21 +43,15 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
     depth = 0
     while len(search_queue) > 0 :
         depth += 1
-        ## this is a (state, "action") tuple
         next_state = search_queue.pop()
         if goal_test(next_state[0]):
-            # print("Goal found")
-            # print(next_state)
-            print("Total States in DFS: ", states)
             ptr = next_state[0]
             while ptr is not None :
                 ptr = ptr.prev
-                # print(ptr)
-            return next_state
+            return next_state, states, True
         else :
             if depth == limit :
-                print("Recursion limit reached!")
-                return
+                return next_state, states, False
             successors = next_state[0].successors(action_list)
             states += len(successors)
             if use_closed_list :
@@ -73,14 +61,14 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
                     closed_list[s[0]] = True
             search_queue.extend(successors)
 
-## add iterative deepening search here
-def iterative_deepening_search(start_state, action_list, goal_test, use_closed_list=True, max_limit=50) :
+def iterative_deepening_search(start_state, action_list, goal_test, use_closed_list=True, max_limit=50) -> (any, int):
+    total_states = 0
     for limit in range(1, max_limit) :
-        # If we have a valid DFS() algorithm then return
-        if depth_first_search(start_state, action_list, goal_test, use_closed_list, limit) :
-            print("Found earliest possible recursion depth: ", limit)
-            return
-    print("No valid recursion depth between 1 and ", max_limit)
+        next_state, state_count, found_goal_state = depth_first_search(start_state, action_list, goal_test, use_closed_list, limit)
+        total_states += state_count
+        if found_goal_state :
+            return next_state, total_states
+    return None, total_states
 
 
 # depth limited search at depth 1, then depth 2, then depth 3, etc.

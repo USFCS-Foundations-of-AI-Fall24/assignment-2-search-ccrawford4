@@ -143,38 +143,123 @@ def charged_goal(state) :
 def holding_tool_goal(state) :
     return state.holding_tool
 
+def dropped_tool_goal(state) :
+    return not state.holding_tool
+
+def holding_sample_goal(state) :
+    return state.holding_sample
+
+def extracted_sample_goal(state) :
+    return sample_extract_goal(state) and dropped_tool_goal(state) and holding_sample_goal(state)
+
 def mission_complete(state) :
     return battery_goal(state) and charged_goal(state) and sample_extract_goal(state)
 
 if __name__=="__main__" :
     print("---------Before problem decomposition-----------")
-    s = RoverState()
-    print("Total States Using BFS: ", breadth_first_search(s, action_list, mission_complete))
+    start_state = RoverState()
+    print("Total States Using BFS: ", breadth_first_search(start_state, action_list, mission_complete)[1])
 
-    s = RoverState()
-    depth_first_search(s, action_list, mission_complete, limit=9)
+    start_state = RoverState()
+    print("Total states using DFS: ", depth_first_search(start_state, action_list, mission_complete)[1])
 
-    s = RoverState()
-    iterative_deepening_search(s, action_list, mission_complete)
+    start_state = RoverState()
+    print("Total states using Depth-Limited DFS: ", depth_first_search(start_state, action_list, mission_complete, limit=9)[1])
+
+    start_state = RoverState()
+    print("Total states using Iterative Deepening Search: ", iterative_deepening_search(start_state, action_list, mission_complete)[1])
+
 
     print("---------After problem decomposition------------")
-
     # Modify your search code so that it instead solves three subproblems: moveToSample, removeSample, and returnToCharger.
-    s = RoverState()
 
+    ### *********************BFS************************
+    start_state = RoverState()
     bfs_total_states = 0
+
     # First move to the sample
     action_list = [move_to_sample]
-    bfs_total_states += breadth_first_search(s, action_list, sample_goal)
-
+    next_state, state_count = breadth_first_search(start_state, action_list, sample_goal)
+    bfs_total_states += state_count
+    next_state = next_state[0]
 
     # Second extract the sample
     # should be at the sample
     action_list = [pick_up_tool, use_tool, drop_tool, pick_up_sample]
-    bfs_total_states += breadth_first_search(s, action_list, sample_extract_goal)
+    next_state, state_count = breadth_first_search(next_state, action_list, extracted_sample_goal)
+    next_state = next_state[0]
+    bfs_total_states += state_count
 
     # Return to charger
     action_list = [move_to_station, drop_sample, move_to_battery, charge]
-    bfs_total_states += breadth_first_search(s, action_list, mission_complete)
+    _, state_count = breadth_first_search(next_state, action_list, mission_complete)
+    bfs_total_states += state_count
+    print("Total States Using BFS: ", bfs_total_states)
 
-    print("Total BFS States: ", bfs_total_states)
+    ### *********************DFS************************
+    start_state = RoverState()
+    dfs_total_states = 0
+
+    # First move to the sample
+    action_list = [move_to_sample]
+    next_state, state_count, _ = depth_first_search(start_state, action_list, sample_goal)
+    next_state = next_state[0]
+    dfs_total_states += state_count
+    # Second extract the sample
+    # should be at the sample
+    action_list = [pick_up_tool, use_tool, drop_tool, pick_up_sample]
+    next_state, state_count, _ = depth_first_search(next_state, action_list, extracted_sample_goal)
+    next_state = next_state[0]
+    dfs_total_states += state_count
+
+    # Return to charger
+    action_list = [move_to_station, drop_sample, move_to_battery, charge]
+    _, state_count, _ = depth_first_search(next_state, action_list, mission_complete)
+    dfs_total_states += state_count
+    print("Total States Using DFS: ", dfs_total_states)
+
+    ### *********************Depth Limited DFS************************
+    start_state = RoverState()
+    dl_dfs_total_states = 0
+
+    # First move to the sample
+    action_list = [move_to_sample]
+    next_state, state_count, _ = depth_first_search(start_state, action_list, sample_goal, limit=9)
+    next_state = next_state[0]
+    dl_dfs_total_states += state_count
+    # Second extract the sample
+    # should be at the sample
+    action_list = [pick_up_tool, use_tool, drop_tool, pick_up_sample]
+    next_state, state_count, _ = depth_first_search(next_state, action_list, extracted_sample_goal, limit=9)
+    next_state = next_state[0]
+    dl_dfs_total_states += state_count
+
+    # Return to charger
+    action_list = [move_to_station, drop_sample, move_to_battery, charge]
+    _, state_count, _ = depth_first_search(next_state, action_list, mission_complete, limit=9)
+    dl_dfs_total_states += state_count
+    print("Total States Using Depth Limited DFS: ", dl_dfs_total_states)
+
+    ### *********************Iterative Deepening Search************************
+    start_state = RoverState()
+    ids_total_states = 0
+
+    # First move to the sample
+    action_list = [move_to_sample]
+    next_state, state_count = iterative_deepening_search(start_state, action_list, sample_goal)
+    next_state = next_state[0]
+    ids_total_states += state_count
+
+    # Second extract the sample
+    action_list = [pick_up_tool, use_tool, drop_tool, pick_up_sample]
+    next_state, state_count = iterative_deepening_search(next_state, action_list, extracted_sample_goal)
+    next_state = next_state[0]
+    ids_total_states += state_count
+
+    # Return to charger
+    action_list = [move_to_station, drop_sample, move_to_battery, charge]
+    _, state_count = iterative_deepening_search(next_state, action_list, mission_complete)
+    ids_total_states += state_count
+    print("Total States Using Iterative Deepening Search: ", ids_total_states)
+
+
