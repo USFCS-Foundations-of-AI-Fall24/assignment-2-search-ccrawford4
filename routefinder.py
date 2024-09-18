@@ -65,6 +65,7 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
         closed_list[start_state] = True
     while search_queue.qsize() > 0:
         next_state = search_queue.get()
+        # print("State ", next_state.location, " h: ", next_state.h, " g: ", next_state.g, " f: ", next_state.f)
         if goal_test(next_state):
             ptr = next_state
             while ptr is not None:
@@ -75,11 +76,13 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
             edges = next_state.mars_graph.get_edges(src_node)
             successors = []
             for edge in edges :
+                location = edge.dest.value
                 new_state = map_state(
-                    location=edge.dest.value,
+                    location=location,
                     mars_graph=next_state.mars_graph,
                     prev_state=next_state,
-                    g=heuristic_fn(src_node.value),
+                    #g=next_state.f,
+                    h=heuristic_fn(location)
                 )
                 successors.append(new_state)
             states += len(successors)
@@ -99,9 +102,9 @@ def h1(state) :
 
 def sld(location) :
     location = location.split(",")
-    x1 = int(location[0])
-    y1 = int(location[1])
-    return math.sqrt(math.pow(x1 - 1, 2) + math.pow(y1 - 1, 2))
+    x2 = int(location[0])
+    y2 = int(location[1])
+    return math.sqrt(math.pow(1 - x2, 2) + math.pow(1 - y2, 2))
 
 if __name__ == '__main__':
     start = map_state(location="8,8")     # Starting at the
@@ -109,4 +112,5 @@ if __name__ == '__main__':
 
     def mission_complete(state) :
         return state.is_goal()
-    print("Number of states: ", a_star(start_state=start, heuristic_fn=sld, goal_test=mission_complete)[1])
+    print("A* with sld: ", a_star(start_state=start, heuristic_fn=sld, goal_test=mission_complete)[1])
+    print("Uniform Cost Search: ", a_star(start_state=start, heuristic_fn=h1, goal_test=mission_complete)[1])
