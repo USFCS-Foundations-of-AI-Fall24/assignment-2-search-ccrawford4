@@ -70,7 +70,6 @@ def iterative_deepening_search(start_state, action_list, goal_test, use_closed_l
             return next_state, total_states
     return None, total_states
 
-
 # depth limited search at depth 1, then depth 2, then depth 3, etc.
 # Pros: has linear memory
 # Cons: have to do repeated work
