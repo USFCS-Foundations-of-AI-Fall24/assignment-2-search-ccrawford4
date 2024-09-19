@@ -80,7 +80,7 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
                     location=location,
                     mars_graph=next_state.mars_graph,
                     prev_state=next_state,
-                    g=next_state.f + 1,
+                    g=next_state.g + 1,
                     h=heuristic_fn(location)
                 )
                 successors.append(new_state)
