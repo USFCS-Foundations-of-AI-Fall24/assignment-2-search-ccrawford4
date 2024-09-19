@@ -60,14 +60,11 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
     search_queue.put(start_state)
     closed_list = {}
     states = 0
-    cost = 0
-    # Change the start state to 4,4
+
     if use_closed_list:
         closed_list[start_state] = True
     while search_queue.qsize() > 0:
-        cost += 1
         next_state = search_queue.get()
-        # print("State ", next_state.location, " h: ", next_state.h, " g: ", next_state.g, " f: ", next_state.f)
         if goal_test(next_state):
             ptr = next_state
             while ptr is not None:
@@ -109,7 +106,7 @@ def sld(location) :
     return math.sqrt(math.pow(x1 - 1, 2) + math.pow(y1 - 1, 2))
 
 if __name__ == '__main__':
-    start = map_state(location="8,8")     # Starting at the
+    start = map_state(location="8,8")     # Starting at the top right position
     start.read_mars_graph('marsmap.txt')
 
     def mission_complete(state) :
