@@ -60,10 +60,12 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
     search_queue.put(start_state)
     closed_list = {}
     states = 0
-
+    cost = 0
+    # Change the start state to 4,4
     if use_closed_list:
         closed_list[start_state] = True
     while search_queue.qsize() > 0:
+        cost += 1
         next_state = search_queue.get()
         # print("State ", next_state.location, " h: ", next_state.h, " g: ", next_state.g, " f: ", next_state.f)
         if goal_test(next_state):
@@ -81,7 +83,7 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
                     location=location,
                     mars_graph=next_state.mars_graph,
                     prev_state=next_state,
-                    #g=next_state.f,
+                    g=next_state.f + 1,
                     h=heuristic_fn(location)
                 )
                 successors.append(new_state)
@@ -102,9 +104,9 @@ def h1(state) :
 
 def sld(location) :
     location = location.split(",")
-    x2 = int(location[0])
-    y2 = int(location[1])
-    return math.sqrt(math.pow(1 - x2, 2) + math.pow(1 - y2, 2))
+    x1 = int(location[0])
+    y1 = int(location[1])
+    return math.sqrt(math.pow(x1 - 1, 2) + math.pow(y1 - 1, 2))
 
 if __name__ == '__main__':
     start = map_state(location="8,8")     # Starting at the
