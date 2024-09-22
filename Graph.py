@@ -17,6 +17,11 @@ class Edge:
         self.src = src
         self.dest = dest
         self.val = val
+    def __eq__(self, other):
+        return (self.src == other.src and
+                self.dest == other.dest and
+                self.val == other.val
+        )
     def __repr__(self):
         return "(%s %s %d)" % (self.src, self.dest, self.val)
 
@@ -24,6 +29,9 @@ class Graph :
     def __init__(self,n_vertices=5):
         ## our adjacency list
         self.g = {}
+
+    def __eq__(self, other):
+        return self.g == other.g
 
     def add_node(self, index):
         self.g[index] = []

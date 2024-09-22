@@ -35,7 +35,7 @@ class map_state() :
     def is_goal(self):
         return self.location == '1,1'
 
-    def  read_mars_graph(self, filename):
+    def read_mars_graph(self, filename):
         g = Graph()
         location_to_node = {}
         with open(filename) as f:
