@@ -93,13 +93,6 @@ def use_tool(state) :
     r2.prev = state
     return r2
 
-def extract_sample(state) :
-    r2 = deepcopy(state)
-    if state.loc == "sample":
-        r2.sample_extracted=True
-    r2.prev = state
-    return r2
-
 def drop_tool(state) :
     r2 = deepcopy(state)
     if holding_tool_goal(state) :
