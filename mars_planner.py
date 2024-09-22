@@ -93,6 +93,13 @@ def use_tool(state) :
     r2.prev = state
     return r2
 
+def extract_sample(state) :
+    r2 = deepcopy(state)
+    if state.loc == "sample":
+        r2.sample_extracted=True
+    r2.prev = state
+    return r2
+
 def drop_tool(state) :
     r2 = deepcopy(state)
     if holding_tool_goal(state) :
@@ -120,9 +127,6 @@ def charge(state) :
         r2.charged = True
     r2.prev = state
     return r2
-
-action_list = [move_to_sample, pick_up_tool, use_tool, drop_tool, pick_up_sample, move_to_station, drop_sample,
-               move_to_battery, charge]
 
 def battery_goal(state) :
     return state.loc == "battery"
@@ -155,7 +159,9 @@ def extracted_sample_goal(state) :
 def mission_complete(state) :
     return battery_goal(state) and charged_goal(state) and sample_extract_goal(state)
 
-if __name__=="__main__" :
+def run_mars_planner_algorithms():
+    action_list = [move_to_sample, pick_up_tool, use_tool, drop_tool, pick_up_sample, move_to_station, drop_sample,
+                   move_to_battery, charge]
     print("---------Before problem decomposition-----------")
     start_state = RoverState()
     print("Total States Using BFS: ", breadth_first_search(start_state, action_list, mission_complete)[1])
@@ -164,11 +170,12 @@ if __name__=="__main__" :
     print("Total states using DFS: ", depth_first_search(start_state, action_list, mission_complete)[1])
 
     start_state = RoverState()
-    print("Total states using Depth-Limited DFS: ", depth_first_search(start_state, action_list, mission_complete, limit=9)[1])
+    print("Total states using Depth-Limited DFS: ",
+          depth_first_search(start_state, action_list, mission_complete, limit=9)[1])
 
     start_state = RoverState()
-    print("Total states using Iterative Deepening Search: ", iterative_deepening_search(start_state, action_list, mission_complete)[1])
-
+    print("Total states using Iterative Deepening Search: ",
+          iterative_deepening_search(start_state, action_list, mission_complete)[1])
 
     print("---------After problem decomposition------------")
     # Modify your search code so that it instead solves three subproblems: moveToSample, removeSample, and returnToCharger.
@@ -261,5 +268,3 @@ if __name__=="__main__" :
     _, state_count = iterative_deepening_search(next_state, action_list, mission_complete)
     ids_total_states += state_count
     print("Total States Using Iterative Deepening Search: ", ids_total_states)
-
-

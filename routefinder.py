@@ -105,7 +105,7 @@ def sld(location) :
     y1 = int(location[1])
     return math.sqrt(math.pow(x1 - 1, 2) + math.pow(y1 - 1, 2))
 
-if __name__ == '__main__':
+def run_route_finder_algorithms() :
     start = map_state(location="8,8")     # Starting at the top right position
     start.read_mars_graph('marsmap.txt')
 
