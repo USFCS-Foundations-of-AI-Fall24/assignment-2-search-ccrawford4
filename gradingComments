@@ -1,0 +1,39 @@
+Assignment 2 comments:
+
+Question 1: Algorithms. 8/10
+DFS and DLS are not complete.
+
+Question 2:
+
+eq: 5/5
+
+goal: 5/5
+
+BFS/DFS: 5/5
+
+DLS: 7/10
+You're using a global variable for depth, which is going to produce the wrong
+count. It's better to make depth a member variable, and then each child's depth
+is parent + 1.
+
+tools: 10/10
+
+decomposition: 10/10
+
+Question 3:
+
+read_mars_graph: 5/5
+
+A*: 15/15
+
+count states: 5/5
+
+Question 4: 10/10
+
+Question 5: 10/10
+
+95/100
+
+
+
+
